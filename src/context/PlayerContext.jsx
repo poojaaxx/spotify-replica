@@ -20,23 +20,39 @@ export default function PlayerProvider({ children }) {
   const [liked, setLiked] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('replica-liked') || '[]');
-      return Array.isArray(saved) ? saved.filter(id => tracks.some(t => t.id === id)) : [];
-    } catch { return []; }
+      return Array.isArray(saved)
+        ? saved.filter((id) => tracks.some((t) => t.id === id))
+        : [];
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
-    try { localStorage.setItem('replica-liked', JSON.stringify(liked)); } catch { /* Saving is optional when storage is disabled. */ }
+    try {
+      localStorage.setItem('replica-liked', JSON.stringify(liked));
+    } catch {
+      /* Saving is optional when storage is disabled. */
+    }
   }, [liked]);
-  useEffect(() => { audioRef.current.volume = volume; audioRef.current.muted = muted; }, [volume, muted]);
+  useEffect(() => {
+    audioRef.current.volume = volume;
+    audioRef.current.muted = muted;
+  }, [volume, muted]);
 
   const safePlay = async () => {
     const request = ++requestRef.current;
     setError('');
-    try { await audioRef.current.play(); }
-    catch (err) {
+    try {
+      await audioRef.current.play();
+    } catch (err) {
       if (request !== requestRef.current || err.name === 'AbortError') return;
       setPlaying(false);
-      setError(err.name === 'NotAllowedError' ? 'Your browser paused playback. Press Play to start listening.' : 'This sample could not play. Try again or choose another track.');
+      setError(
+        err.name === 'NotAllowedError'
+          ? 'Your browser paused playback. Press Play to start listening.'
+          : 'This sample could not play. Try again or choose another track.',
+      );
     }
   };
   const selectTrack = (track, list = tracks) => {
@@ -53,29 +69,87 @@ export default function PlayerProvider({ children }) {
   };
   const toggle = () => {
     if (!current) return selectTrack(queue[0] || tracks[0], queue);
-    if (!audioRef.current.paused) { requestRef.current++; audioRef.current.pause(); }
-    else safePlay();
+    if (!audioRef.current.paused) {
+      requestRef.current++;
+      audioRef.current.pause();
+    } else safePlay();
   };
   const advance = (direction = 1) => {
     if (!current) return selectTrack(queue[0] || tracks[0], queue);
     if (direction < 0 && audioRef.current.currentTime > 3) return seek(0);
-    const index = queue.findIndex(t => t.id === current.id);
-    const offset = shuffle && direction > 0 && queue.length > 1 ? 1 + Math.floor(Math.random() * (queue.length - 1)) : direction;
-    selectTrack(queue[(index + offset + queue.length) % queue.length] || tracks[0], queue);
+    const index = queue.findIndex((t) => t.id === current.id);
+    const offset =
+      shuffle && direction > 0 && queue.length > 1
+        ? 1 + Math.floor(Math.random() * (queue.length - 1))
+        : direction;
+    selectTrack(
+      queue[(index + offset + queue.length) % queue.length] || tracks[0],
+      queue,
+    );
   };
-  const seek = value => {
+  const seek = (value) => {
     if (!current || !Number.isFinite(audioRef.current.duration)) return;
     const next = Math.max(0, Math.min(value, audioRef.current.duration));
     audioRef.current.currentTime = next;
     setTime(next);
   };
   const onEnded = () => {
-    if (repeat) { seek(0); safePlay(); }
-    else advance(1);
+    if (repeat) {
+      seek(0);
+      safePlay();
+    } else advance(1);
   };
-  const toggleLike = id => setLiked(list => list.includes(id) ? list.filter(x => x !== id) : [...list, id]);
-  return <PlayerContext.Provider value={{ current, queue, playing, time, duration, volume, muted, shuffle, repeat, error, liked, selectTrack, toggle, advance, seek, setVolume, setMuted, setShuffle, setRepeat, toggleLike }}>
-    {children}
-    <audio ref={audioRef} preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onTimeUpdate={e => setTime(e.currentTarget.currentTime)} onLoadedMetadata={e => setDuration(Number.isFinite(e.currentTarget.duration) ? e.currentTarget.duration : 0)} onEnded={onEnded} onError={() => { setPlaying(false); setError('Audio unavailable. Please choose another track or retry playback.'); }}/>
-  </PlayerContext.Provider>;
+  const toggleLike = (id) =>
+    setLiked((list) =>
+      list.includes(id) ? list.filter((x) => x !== id) : [...list, id],
+    );
+  return (
+    <PlayerContext.Provider
+      value={{
+        current,
+        queue,
+        playing,
+        time,
+        duration,
+        volume,
+        muted,
+        shuffle,
+        repeat,
+        error,
+        liked,
+        selectTrack,
+        toggle,
+        advance,
+        seek,
+        setVolume,
+        setMuted,
+        setShuffle,
+        setRepeat,
+        toggleLike,
+      }}
+    >
+      {children}
+      <audio
+        ref={audioRef}
+        preload="metadata"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) =>
+          setDuration(
+            Number.isFinite(e.currentTarget.duration)
+              ? e.currentTarget.duration
+              : 0,
+          )
+        }
+        onEnded={onEnded}
+        onError={() => {
+          setPlaying(false);
+          setError(
+            'Audio unavailable. Please choose another track or retry playback.',
+          );
+        }}
+      />
+    </PlayerContext.Provider>
+  );
 }
