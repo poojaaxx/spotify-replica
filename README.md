@@ -141,4 +141,4 @@ This is an assignment music player, not the full Spotify service. It has six sho
 
 ## Git
 
-The supplied remote is `https://github.com/poojaaxx/spotify-replica`. It was empty when inspected. Development stages are committed locally with the user-confirmed identity. Dependencies, builds, temporary tools/screenshots, and environment files are ignored. **Nothing has been pushed.**
+The supplied remote is `https://github.com/poojaaxx/spotify-replica`. It was empty when initially inspected. Development stages are committed with the user-confirmed identity on `main`. Dependencies, builds, temporary tools/screenshots, and environment files are ignored.
