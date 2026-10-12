@@ -2,6 +2,34 @@
 
 An **unofficial educational Spotify-style replica**, built for the SapphireIQ front-end assignment. This project is not affiliated with or endorsed by Spotify. It uses React, plain CSS, the HTML5 Audio API, and React Context; it does not connect to Spotify services.
 
+## Screenshots
+
+Actual app screenshots captured in Chromium. The desktop and tablet layouts use a sidebar; mobile uses bottom navigation and a compact persistent player.
+
+### Desktop home
+
+![Desktop home showing playlist collections, sidebar navigation, and the persistent player](docs/screenshots/desktop-home.png)
+
+### Playlist view
+
+![Desktop After Hours playlist showing its cover, play button, and track list](docs/screenshots/desktop-playlist.png)
+
+### Search with the persistent player
+
+![Desktop search view showing searchable tracks while Midnight Motion remains in the player](docs/screenshots/desktop-search.png)
+
+### Tablet
+
+<img src="docs/screenshots/tablet-home.png" alt="Tablet home with a narrower sidebar and responsive playlist grid" width="620" />
+
+### Mobile
+
+| Home                                                                                                                                 | Playlist                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="docs/screenshots/mobile-home.png" alt="Mobile home showing two-column playlist cards and bottom navigation" width="300" /> | <img src="docs/screenshots/mobile-playlist.png" alt="Mobile playlist showing its cover, tracks, and compact audio player" width="300" /> |
+
+Screenshots are stored in `docs/screenshots/` and included in Git so they display on GitHub.
+
 ## Run locally
 
 Use Node.js **22.12 or newer** (Node 24 recommended) and npm.
